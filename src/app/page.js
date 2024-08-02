@@ -12,6 +12,7 @@ import {
   deleteDoc,
   getDoc,
 } from 'firebase/firestore'
+import { ST } from 'next/dist/shared/lib/utils'
 
 const style = {
   position: 'absolute',
@@ -27,6 +28,8 @@ const style = {
   flexDirection: 'column',
   gap: 3,
 }
+
+const item = ['tomato', 'onion', 'biscoff', 'potato', 'carrot']
 
 export default function Home() {
   // We'll add our component logic here
