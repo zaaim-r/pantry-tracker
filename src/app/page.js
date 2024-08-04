@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Box, Stack, Typography, Button, Modal, TextField } from '@mui/material'
+import { Box, Stack, Typography, Button, Modal, TextField, Divider } from '@mui/material'
 import { firestore } from '@/firebase'
 import {
   collection,
@@ -129,13 +129,21 @@ export default function Home() {
     flexDirection={'column'}
     alignItems={'center'}
     gap={2}
+    sx={{
+      backgroundImage: `url(https://t3.ftcdn.net/jpg/04/63/13/44/360_F_463134498_8VQb9uEoaSyrhgikdIUdp0D46zw7WTcN.jpg)`,
+      backgroundRepeat: "no-repeat",
+      backgroundSize: "cover",
+
+    }}
   >
-    <Button variant="contained" onClick={handleOpenSearch}>
+    <Box>
+    <Button variant="contained" onClick={handleOpenSearch} gap={2}>
       Search
     </Button>
-    <Button variant="contained" onClick={handleOpenAdd}>
+    <Button variant="contained" onClick={handleOpenAdd} gap={2}>
       Add New Item
     </Button>
+    </Box>
     <Box border={'1px solid #333'}>
       <Box
         width="800px"
@@ -149,7 +157,7 @@ export default function Home() {
           Inventory Items
         </Typography>
       </Box>
-      <Stack width="800px" height="300px" spacing={2} overflow={'auto'}>
+      <Stack width="800px" height="300px" divider={<Divider orientation="horizontal" flexItem />} overflow={'auto'}>
         {inventory.map(({name, quantity}) => (
           <Box
             key={name}
