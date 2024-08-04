@@ -13,6 +13,9 @@ import {
   getDoc,
 } from 'firebase/firestore'
 import { ST } from 'next/dist/shared/lib/utils'
+import IconButton from "@mui/material/IconButton";
+import SearchIcon from "@mui/icons-material/Search";
+//import TextField from "@mui/material/TextField";
 
 const style = {
   position: 'absolute',
@@ -29,13 +32,45 @@ const style = {
   gap: 3,
 }
 
-const item = ['tomato', 'onion', 'biscoff', 'potato', 'carrot']
+const data = ['tomato', 'onion', 'biscoff', 'potato', 'carrot']
+
+const SearchBar = ({setSearchQuery}) => (
+  <form>
+    <TextField
+      id="search-bar"
+      className="text"
+      onInput={(e) => {
+        setSearchQuery(e.target.value);
+      }}
+      label="Enter an item name"
+      variant="outlined"
+      placeholder="Search..."
+      size="small"
+      fullWidth
+    />
+    {/* <IconButton type="submit" aria-label="search">
+      <SearchIcon style={{ fill: "blue" }} />
+    </IconButton> */}
+  </form>
+);
+
+const filterData = (query, inventory) => {
+  if (!query) {
+    return inventory;
+  } else {
+    return inventory.filter(({name}) => name.substring(0,query.length).toLowerCase().includes(query));
+  }
+};
 
 export default function Home() {
-  // We'll add our component logic here
+  // useStates for creating and managing the inventory
   const [inventory, setInventory] = useState([])
-  const [open, setOpen] = useState(false)
+  const [openAdd, setOpenAdd] = useState(false)
+  const [openSearch, setOpenSearch] = useState(false)
   const [itemName, setItemName] = useState('')
+  // useStates for search feature
+  const [searchQuery, setSearchQuery] = useState("");
+  const dataFiltered = filterData(searchQuery, inventory);
 
   const updateInventory = async () => {
     const snapshot = query(collection(firestore, 'inventory'))
@@ -73,8 +108,13 @@ export default function Home() {
     await updateInventory()
   }
 
-  const handleOpen = () => setOpen(true)
-  const handleClose = () => setOpen(false)
+  // Add item modal
+  const handleOpenAdd = () => setOpenAdd(true)
+  const handleCloseAdd = () => setOpenAdd(false)
+
+  // Search Modal
+  const handleOpenSearch = () => setOpenSearch(true)
+  const handleCloseSearch = () => setOpenSearch(false)
   
   useEffect(() => {
     updateInventory()
@@ -90,39 +130,10 @@ export default function Home() {
     alignItems={'center'}
     gap={2}
   >
-    <Modal
-      open={open}
-      onClose={handleClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          Add Item
-        </Typography>
-        <Stack width="100%" direction={'row'} spacing={2}>
-          <TextField
-            id="outlined-basic"
-            label="Item"
-            variant="outlined"
-            fullWidth
-            value={itemName}
-            onChange={(e) => setItemName(e.target.value)}
-          />
-          <Button
-            variant="outlined"
-            onClick={() => {
-              addItem(itemName)
-              setItemName('')
-              handleClose()
-            }}
-          >
-            Add
-          </Button>
-        </Stack>
-      </Box>
-    </Modal>
-    <Button variant="contained" onClick={handleOpen}>
+    <Button variant="contained" onClick={handleOpenSearch}>
+      Search
+    </Button>
+    <Button variant="contained" onClick={handleOpenAdd}>
       Add New Item
     </Button>
     <Box border={'1px solid #333'}>
@@ -162,6 +173,70 @@ export default function Home() {
           </Box>
         ))}
       </Stack>
+    </Box>
+    <Box>
+      <Modal
+        open={openAdd}
+        onClose={handleCloseAdd}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Add Item
+          </Typography>
+          <Stack width="100%" direction={'row'} spacing={2}>
+            <TextField
+              id="outlined-basic"
+              label="Item"
+              variant="outlined"
+              fullWidth
+              value={itemName}
+              onChange={(e) => setItemName(e.target.value)}
+            />
+            <Button
+              variant="outlined"
+              onClick={() => {
+                addItem(itemName)
+                setItemName('')
+                handleCloseAdd()
+              }}
+            >
+              Add
+            </Button>
+          </Stack>
+        </Box>
+      </Modal>
+      <Modal
+        open={openSearch}
+        onClose={handleCloseSearch}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+          <Box style={{ padding: 3 }}>
+              {dataFiltered.map(({name, quantity}) => (
+                <Box
+                  className="text"
+                  style={{
+                    padding: 5,
+                    justifyContent: "normal",
+                    fontSize: 20,
+                    color: "blue",
+                    margin: 1,
+                    width: "250px",
+                    BorderColor: "green",
+                    borderWidth: "10px"
+                  }}
+                  
+                >
+                {name.charAt(0).toUpperCase() + name.slice(1)}, {quantity}
+                </Box>
+              ))}
+            </Box>
+        </Box>
+      </Modal>
     </Box>
   </Box>
   )
