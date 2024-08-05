@@ -237,6 +237,7 @@ export default function Home() {
                     BorderColor: "green",
                     borderWidth: "10px"
                   }}
+                  key={name.id}
                   >
                   {name.charAt(0).toUpperCase() + name.slice(1)}, {quantity}
                 </Box>
