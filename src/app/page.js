@@ -237,9 +237,8 @@ export default function Home() {
                     BorderColor: "green",
                     borderWidth: "10px"
                   }}
-                  
-                >
-                {name.charAt(0).toUpperCase() + name.slice(1)}, {quantity}
+                  >
+                  {name.charAt(0).toUpperCase() + name.slice(1)}, {quantity}
                 </Box>
               ))}
             </Box>
